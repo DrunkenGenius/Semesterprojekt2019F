@@ -21,7 +21,7 @@ unsigned int rgbColorArray[6][3] = {{255, 0, 0},{255, 255, 0},{0, 255, 0},{0, 25
 int iterator = 0;
 //HEX
 uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x6400FF,0x0000FF,0x0032FF,0x9600FF,0x00FFFF,0x00FFC8,0x00FF64,0x00FF32,0x00FF00,0x28FF00,0x4BFF00,0x64FF00,0x96FF00,0xC8FF00,0xFFFF00,0x96FF00};
-int hexColorIterator = 0;
+unsigned int hexColorIterator = 0;
 
 
 int colorMode = 0; //0 == Color array ; 1 == Random Colors ; 2 == Absorb colors;
@@ -99,9 +99,10 @@ void loop() {
       ChaosAbsorbColors();
   }
   
-  Serial.print(digitalRead(modeButtPin));
+  Serial.println(digitalRead(modeButtPin));
+  Serial.println(colorMode); 
     
-  if(digitalRead(modeButtPin) == 0){
+  if(digitalRead(modeButtPin) == 1){
     colorMode = (colorMode + 1) % 3;
     if(colorMode == 2){
 //      tcs.setInterrupt(false); //Turn on LED
