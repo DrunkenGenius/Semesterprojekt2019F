@@ -101,6 +101,21 @@ void loop() {
   Serial.println(colorMode); 
     
   if(digitalRead(modeButtPin) == 1){
+
+    /*
+     * Check whether the button has been pushed in long enough to absorb colors, or if it should just switch mode.
+     */
+    int pushDelay = 0;    //Integer to mark for how long the button has been pushed down
+    while(pushDelay < 50 && digitalRead(modeButtPin) == 1){ //While the time hasn't passed, and the button hasn't been lifted again.
+      pushDelay ++;
+      delay(10);
+    }
+
+    if(digitalRead(modeButtPin) == 1){ //If the button hasn't been released
+      AbsorbColors();   //Go to the function that absorbs colors
+      break;
+    }
+    
     colorMode = (colorMode + 1) % 3;
     if(colorMode == 2){
 //      tcs.setInterrupt(false); //Turn on LED
@@ -187,8 +202,38 @@ float GetColorConstant(int red, int gre, int blu){
   return colorConstant;
 }
 
+/*
+ * Absorb colors while the button is pressed down
+ * When the button is released, keep the absorbed color,
+ * when a significantly large shake or a button press is detected,
+ * break out of the function.
+ */
 void AbsorbColors(){
 
+  //TO-DO: While there is a button press, continue.
+
+  do{
+    float red, green, blue; //Prepare RGB values for reading.
+    
+    tcs.setInterrupt(false); //Turn on RGB sensor
+
+    delay(50) //Give the sensor time to read colors
+    
+    tcs.getRGB(&red, &green, &blue); //Get RGB values
+    
+    //TO-DO: Set color of LED-Strip
+  }while(digitalRead(modeButtPin) == 1);
+
+  delay(1000); //An arbritrary delay to prevent color change for a second after the button has been released
+
+  do{
+    delay(10);
+    
+    sensors_event_t event;
+    accel.getEvent(&event);
+
+    int totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
+  }while(totalAccelleration < 40 && digitalRead(modeButtPin) != 1);
   
 }
 
