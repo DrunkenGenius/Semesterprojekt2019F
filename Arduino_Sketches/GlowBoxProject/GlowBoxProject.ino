@@ -1,9 +1,9 @@
 #include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_DotStar.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_ADXL343.h>
-//#include <Adafruit_TCS34725.h>
+#include <Adafruit_DotStar.h> //LED STRIP
+#include <Adafruit_Sensor.h> 
+#include <Adafruit_ADXL343.h> //Accelerometer
+#include <Adafruit_TCS34725.h> //Flora Color Sensor
 
 int redLed = 3; //true
 int greenLed = 5; //virker meget dominerende
@@ -28,7 +28,7 @@ int colorMode = 0; //0 == Color array ; 1 == Random Colors ; 2 == Absorb colors;
 float greenDownScaleConstant = 1;
 
 Adafruit_ADXL343 accel = Adafruit_ADXL343(12345); // Accelerometer
-//Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X); //Color sensor
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X); //Color sensor
 
 
 // Here's how to control the LEDs from any two pins:
@@ -66,12 +66,10 @@ void setup() {
     Serial.println("Ooops, no ADXL343 detected ... Check your wiring!");
     while(1);
   }
-//  if(!tcs.begin()){
-  //  Serial.println("Ooops, no TCS34725 detected ... Check your wiring!");
-   // while(1);
-  //}
-
-  
+ if(!tcs.begin()){
+    Serial.println("Ooops, no TCS34725 detected ... Check your wiring!");
+    while(1);
+  }  
 
 }
 
@@ -111,6 +109,24 @@ void loop() {
     }
     delay(1000);
   }
+
+   float red, green, blue;
+  
+  tcs.setInterrupt(false);  // turn on LED
+
+  delay(60);  // takes 50ms to read
+
+  tcs.getRGB(&red, &green, &blue);
+
+
+   Serial.print("R:\t"); Serial.print(int(red)); 
+ Serial.print("\tG:\t"); Serial.print(int(green)); 
+  Serial.print("\tB:\t"); Serial.print(int(blue));
+
+//  Serial.print("\t");
+ // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
+  Serial.print("\n");
+
   
 }
 
