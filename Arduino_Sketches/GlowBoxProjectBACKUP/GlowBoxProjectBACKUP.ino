@@ -5,12 +5,12 @@
 #include <Adafruit_ADXL343.h> //Accelerometer
 #include <Adafruit_TCS34725.h> //Flora Color Sensor
 
-unsigned int rgbColor1[3] = {255, 0, 0}; //This box's colors
-unsigned int rgbColor3[3] = {0, 0, 0}; //The two boxes' colors combined.
+unsigned int ownRgbColor[3] = {0, 0, 0}; //This box's colors
 
 //Basic Colors
 //HEX
 uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x6400FF,0x0000FF,0x0032FF,0x9600FF,0x00FFFF,0x00FFC8,0x00FF64,0x00FF32,0x00FF00,0x28FF00,0x4BFF00,0x64FF00,0x96FF00,0xC8FF00,0xFFFF00,0x96FF00};
+uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255}k,{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
 unsigned int hexColorIterator = 0;
 
 int stripLength = 10;
@@ -103,26 +103,36 @@ void loop() {
 
     if(digitalRead(modeButtPin) == 1){ //If the button hasn't been released
       AbsorbColors();   //Go to the function that absorbs colors
-      
+    }else{
+      delay(400);
+
+      if(digitalRead(modeButtPin) == 1){
+        CombineColor();
+      }else{
+        colorMode = (colorMode + 1) % 3; //If we don't use any of the advanced functions, it iterates through the modes as normal.
+      }
     }
     
-    colorMode = (colorMode + 1) % 3;
     if(colorMode == 2){
       tcs.setInterrupt(false); //Turn on LED
     }else{
       tcs.setInterrupt(true); //Turn off LED
     }
+    
     delay(1000);
   }
 }
 
 //opdeler RGB'en i de enkelte farver og sætter farven på strippen
 void setColor(uint8_t red,uint8_t green, uint8_t blue){
+
+  ownRgbColor = { red, green, blue };
+  
   for(int i=0; i<stripLength ; i++){
     strip.setPixelColor(i, green,red,blue);
     }
     strip.show();
-  }
+}
 
 //Læser og sætter farven konstant
 void ChaosAbsorbColors(){
@@ -179,10 +189,9 @@ void ChaosAbsorbColors(){
  // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
     Serial.print("\n");
 }
+
 void AbsorbColors(){
   int totalAccelleration;
-  //TO-DO: While there is a button press, continue.
-
   do{
     float red, green, blue; //Prepare RGB values for reading.
     
@@ -211,12 +220,40 @@ void AbsorbColors(){
   
 }
 
+
+void CombineColor(){
+  float red, green, blue, ownRed, ownGreen, ownBlue;
+
+  ownRed = ownRGBColor[0]
+  ownGreen = ownRGBColor[1]
+  ownBlue = ownRGBColor[2]
+
+  delay(60);  // takes 50ms to read
+
+  tcs.getRGB(&red, &green, &blue);
+
+  delay(500);
+
+  SetColor((ownRed + red) / 2, (ownGreen + green) / 2, (ownBlue + blue) / 2);
+
+  int totalAccelleration;
+
+  do(){
+    delay(10);
+    
+    sensors_event_t event;
+    accel.getEvent(&event);
+    totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
+    
+  }while(totalAccelleration < 40);
+}
+
 //Kører kronologisk igennem arrayet af HEX-colors
 void NextColorInFixedArray(){
 
    if(hexColorIterator < 21){
-    uint32_t color = colorHexArray[hexColorIterator];
-    setFullColor(color);
+    uint32_t color = colorArray[hexColorIterator];
+    setColor(color);
     hexColorIterator++;
         Serial.println(hexColorIterator);
 
@@ -224,38 +261,35 @@ void NextColorInFixedArray(){
    }
    else{
         hexColorIterator = 0;
-    uint32_t color = colorHexArray[hexColorIterator];
-    setFullColor(color);
+    uint32_t color = colorArray[hexColorIterator];
+    ownRGBColor(color);
     Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
     Serial.println(hexColorIterator);
     delay(500);
     }
   
   /*
-  iterator++;
-  if(iterator >= 6){
-    iterator = 0;
-  }
-
-  int oldColors[] = {rgbColor1[0], rgbColor1[1], rgbColor1[2]};
+  
+  int oldColors[] = {ownRgbColor[0], ownRgbColor[1], ownRgbColor[2]};
   int newColors[] = {rgbColorArray[iterator][0], rgbColorArray[iterator][1], rgbColorArray[iterator][2]};
 
   for(int i = 0; i < 100; i++){
     for(int i2 = 0; i2 < 3; i2++){
-      rgbColor1[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
+      ownRgbColor[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
     }
     SingleColor();
     delay(2.5);
   }
   
   for(int i = 0; i < 3; i++){
-    rgbColor1[i] = newColors[i];
+    ownRgbColor[i] = newColors[i];
     Serial.print("  ");
-    Serial.print(rgbColor1[i]);
+    Serial.print(ownRgbColor[i]);
   }
   Serial.println();
   */
 }
+
 
 void setFullColor(uint32_t color){
   for(int i=0; i<stripLength; i++){
@@ -266,7 +300,7 @@ void setFullColor(uint32_t color){
 
 void ChangeRandomColor(){
  int randomHex = random(0,21);
-    uint32_t color = colorHexArray[randomHex];
-    setFullColor(color);
+    uint32_t color = colorArray[randomHex];
+    setColor(color);
     delay(500);
    }
