@@ -79,21 +79,23 @@ void loop() {
 
   int totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
 
-  Serial.print("Acceleration : ");
-  Serial.println(totalAccelleration);
-  
-  if(totalAccelleration > 40){
-    Serial.println("Shaking");
-          NextColorInFixedArray();
-    
-    if(colorMode == 0){
-      ChangeRandomColor();
-    }else if(colorMode == 1){
-      NextColorInFixedArray();
-    }
+  //Serial.print("Acceleration : ");
+  //Serial.println(totalAccelleration);
+
+  if(colorMode == 0 || colorMode == 1){
+    tcs.setInterrupt(true);  // turn off LED
+    if(totalAccelleration > 40){
+      if(colorMode == 1){
+        ChangeRandomColor();
+      }
+      if(colorMode == 0){
+        NextColorInFixedArray();
+      }
     delay(50);
   }
+  }
   if(colorMode == 2){
+      tcs.setInterrupt(false);  // turn off LED
       ChaosAbsorbColors();
   }
   
@@ -109,25 +111,6 @@ void loop() {
     }
     delay(1000);
   }
-
-   float red, green, blue;
-  
-  tcs.setInterrupt(false);  // turn on LED
-
-  delay(60);  // takes 50ms to read
-
-  tcs.getRGB(&red, &green, &blue);
-
-
-   Serial.print("R:\t"); Serial.print(int(red)); 
- Serial.print("\tG:\t"); Serial.print(int(green)); 
-  Serial.print("\tB:\t"); Serial.print(int(blue));
-
-//  Serial.print("\t");
- // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
-  Serial.print("\n");
-
-  
 }
 
 void SingleColor(){
@@ -187,40 +170,81 @@ float GetColorConstant(int red, int gre, int blu){
   return colorConstant;
 }
 
-void AbsorbColors(){
-
-  
-}
-
-void ChaosAbsorbColors(){
-  float red, green, blue;
-
-//  tcs.getRGB(&red, &green, &blue);
-
-  int oldColors[] = {rgbColor1[0], rgbColor1[1], rgbColor1[2]};
-  int newColors[] = {red, green, blue};
-
-  for(int i = 0; i < 100; i++){
-    for(int i2 = 0; i2 < 3; i2++){
-      rgbColor1[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
+//opdeler RGB'en i de enkelte farver og sætter farven på strippen
+void setColor(uint8_t red,uint8_t green, uint8_t blue){
+  for(int i=0; i<5 ; i++){
+    strip.setPixelColor(i, green,red,blue);
     }
-    SingleColor();
-    delay(2.5);
+    strip.show();
   }
+
+//Læser og sætter farven konstant
+void ChaosAbsorbColors(){
+  Serial.println("CHAAAAAAAAAAAAAAAAAAAAAAAAAAAAOOOOOOOOS");
+  float red, green, blue;
   
-  for(int i = 0; i < 3; i++){
-    rgbColor1[i] = newColors[i];
-    Serial.print("  ");
-    Serial.print(rgbColor1[i]);
-  }
-  Serial.println();
+  tcs.setInterrupt(false);  // turn on LED
+
+  delay(60);  // takes 50ms to read
+
+  tcs.getRGB(&red, &green, &blue); //Får farverne 
+
+  tcs.setInterrupt(true);  // turn off LED
+
+  //Disse IF-statements kalibrerer farverne så de passer bedre på den rigtige farve der bliver aflæst, fremfor at det bare bliver vidt
+  int tempColor = red * 1.2;
+  if(red>green && red > blue){
+    if(red*1.5>255){
+      green -= 40;
+        blue -= 40;
+      red=255;
+      }else{
+        green *= 0.7;
+        blue *= 0.7;
+        red *= 1.5;
+        }
+      }
+
+   if(green>red && green > blue){
+    if((green * 1.5)>255){
+      red *= 0.7;
+        blue *= 0.7;
+      green=255;
+      }else{
+        red *= 0.7;
+        blue *= 0.7;
+        green *= 1.5;
+        }
+         }
+
+         if(blue>red && blue > green){
+    if((blue * 1.5)>255){
+      green *= 0.7;
+        blue *= 0.7;
+      blue=255;
+      }else{
+        red *= 0.7;
+        green *= 0.7;
+        blue *= 1.5;
+        }
+         }
+     setColor(red,green,blue);
+      Serial.print("R:\t"); Serial.print(int(red)); 
+      Serial.print("\tG:\t"); Serial.print(int(green)); 
+      Serial.print("\tB:\t"); Serial.print(int(blue));
+
+//  Serial.print("\t");
+ // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
+    Serial.print("\n");
 }
 
+
+//Kører kronologisk igennem arrayet af HEX-colors
 void NextColorInFixedArray(){
 
    if(hexColorIterator < 21){
     uint32_t color = colorHexArray[hexColorIterator];
-    setColor(color);
+    setFullColor(color);
     hexColorIterator++;
         Serial.println(hexColorIterator);
 
@@ -229,7 +253,7 @@ void NextColorInFixedArray(){
    else{
         hexColorIterator = 0;
     uint32_t color = colorHexArray[hexColorIterator];
-    setColor(color);
+    setFullColor(color);
     Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
     Serial.println(hexColorIterator);
     delay(500);
@@ -261,7 +285,7 @@ void NextColorInFixedArray(){
   */
 }
 
-void setColor(uint32_t color){
+void setFullColor(uint32_t color){
   for(int i=0; i<10; i++){
     strip.setPixelColor(i, color);
     }
@@ -269,32 +293,8 @@ void setColor(uint32_t color){
   }
 
 void ChangeRandomColor(){
-  int oldColors[] = {rgbColor1[0], rgbColor1[1], rgbColor1[2]};
-  int newColors[3];
-
-  for(int i = 0; i < 3; i++){
-    newColors[i] = random(255);
-  }
-
-  if(newColors[0] < newColors[1] && newColors[0] < newColors[2]){
-    newColors[0] /= 2;
-  } else if(newColors[1] < newColors[0] && newColors[1] < newColors[2]){
-    newColors[1] /= 2;
-  } else if(newColors[2] < newColors[1] && newColors[2] < newColors[0]){
-    newColors[2] /= 2;
-  }
-
-
-  for(int i = 0; i < 100; i++){
-    for(int i2 = 0; i2 < 3; i2++){
-      rgbColor1[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
-    }
-    SingleColor();
-    delay(2.5);
-  }
-  
-  for(int i = 0; i < 3; i++){
-    rgbColor1[i] = newColors[i];
-  }
-  //delay(500);
-}
+ int randomHex = random(0,21);
+    uint32_t color = colorHexArray[randomHex];
+    setFullColor(color);
+    delay(500);
+   }
