@@ -55,7 +55,7 @@ void setup() {
   #endif
 
   strip.begin(); // Initialize pins for output
-  //strip.show();  // Turn all LEDs off ASAP
+  strip.show();  // Turn all LEDs off ASAP
   
   // put your setup code here, to run once:
   Serial.begin(9600);
