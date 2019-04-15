@@ -5,12 +5,12 @@
 #include <Adafruit_ADXL343.h> //Accelerometer
 #include <Adafruit_TCS34725.h> //Flora Color Sensor
 
-unsigned int ownRgbColor[3] = {0, 0, 0}; //This box's colors
+unsigned int ownRGBColor[3] = {0, 0, 0}; //This box's colors
 
 //Basic Colors
 //HEX
 uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x6400FF,0x0000FF,0x0032FF,0x9600FF,0x00FFFF,0x00FFC8,0x00FF64,0x00FF32,0x00FF00,0x28FF00,0x4BFF00,0x64FF00,0x96FF00,0xC8FF00,0xFFFF00,0x96FF00};
-uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255}k,{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
+uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255},{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
 unsigned int hexColorIterator = 0;
 
 int stripLength = 10;
@@ -124,9 +124,11 @@ void loop() {
 }
 
 //opdeler RGB'en i de enkelte farver og sætter farven på strippen
-void setColor(uint8_t red,uint8_t green, uint8_t blue){
+void SetColor(uint8_t red,uint8_t green, uint8_t blue){
 
-  ownRgbColor = { red, green, blue };
+  ownRGBColor[0] = red;
+  ownRGBColor[1] = green;
+  ownRGBColor[2] = blue;
   
   for(int i=0; i<stripLength ; i++){
     strip.setPixelColor(i, green,red,blue);
@@ -180,7 +182,7 @@ void ChaosAbsorbColors(){
         blue *= 1.5;
         }
          }
-     setColor(red,green,blue);
+     SetColor(red,green,blue);
       Serial.print("R:\t"); Serial.print(int(red)); 
       Serial.print("\tG:\t"); Serial.print(int(green)); 
       Serial.print("\tB:\t"); Serial.print(int(blue));
@@ -201,7 +203,7 @@ void AbsorbColors(){
     
     tcs.getRGB(&red, &green, &blue); //Get RGB values
 
-    setColor(red, green, blue);
+    SetColor(red, green, blue);
     
   }while(digitalRead(modeButtPin) == 1);
 
@@ -225,9 +227,9 @@ void AbsorbColors(){
 void CombineColor(){
   float red, green, blue, ownRed, ownGreen, ownBlue;
 
-  ownRed = ownRGBColor[0]
-  ownGreen = ownRGBColor[1]
-  ownBlue = ownRGBColor[2]
+  ownRed = ownRGBColor[0];
+  ownGreen = ownRGBColor[1];
+  ownBlue = ownRGBColor[2];
 
   delay(60);  // takes 50ms to read
 
@@ -239,7 +241,7 @@ void CombineColor(){
 
   int totalAccelleration;
 
-  do(){
+  do{
     delay(10);
     
     sensors_event_t event;
@@ -255,8 +257,8 @@ void CombineColor(){
 void NextColorInFixedArray(){
 
    if(hexColorIterator < 21){
-    uint32_t color = colorArray[hexColorIterator];
-    setColor(color);
+    uint32_t color[3] = {colorArray[hexColorIterator]};
+    SetColor(color[0], color[1], color[2]);
     hexColorIterator++;
         Serial.println(hexColorIterator);
 
@@ -264,8 +266,10 @@ void NextColorInFixedArray(){
    }
    else{
         hexColorIterator = 0;
-    uint32_t color = colorArray[hexColorIterator];
-    ownRGBColor(color);
+    uint32_t color[3] = {colorArray[hexColorIterator]};
+    ownRGBColor[0] = color[0];
+    ownRGBColor[0] = color[1];
+    ownRGBColor[0] = color[2];
     Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
     Serial.println(hexColorIterator);
     delay(500);
@@ -273,21 +277,21 @@ void NextColorInFixedArray(){
   
   /*
   
-  int oldColors[] = {ownRgbColor[0], ownRgbColor[1], ownRgbColor[2]};
+  int oldColors[] = {ownRGBColor[0], ownRGBColor[1], ownRGBColor[2]};
   int newColors[] = {rgbColorArray[iterator][0], rgbColorArray[iterator][1], rgbColorArray[iterator][2]};
 
   for(int i = 0; i < 100; i++){
     for(int i2 = 0; i2 < 3; i2++){
-      ownRgbColor[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
+      ownRGBColor[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
     }
     SingleColor();
     delay(2.5);
   }
   
   for(int i = 0; i < 3; i++){
-    ownRgbColor[i] = newColors[i];
+    ownRGBColor[i] = newColors[i];
     Serial.print("  ");
-    Serial.print(ownRgbColor[i]);
+    Serial.print(ownRGBColor[i]);
   }
   Serial.println();
   */
@@ -303,7 +307,7 @@ void setFullColor(uint32_t color){
 
 void ChangeRandomColor(){
  int randomHex = random(0,21);
-    uint32_t color = colorArray[randomHex];
-    setColor(color);
+    uint32_t color[3] = {colorArray[randomHex]};
+    SetColor(color[0], color[1], color[2]);
     delay(500);
    }
