@@ -74,10 +74,10 @@ void loop() {
 
   if(colorMode == 0 || colorMode == 1){
     if(totalAccelleration > 40){
-      if(colorMode == 1){
+      if(colorMode == 0){
         ChangeRandomColor();
       }
-      if(colorMode == 0){
+      if(colorMode == 1){
         NextColorInFixedArray();
       }
     delay(50);
@@ -217,7 +217,8 @@ void AbsorbColors(){
 
     
   }while(totalAccelleration < 40 && digitalRead(modeButtPin) != 1); //While there's no shake, and the button isn't pushed down
-  
+
+  colorMode = 0;
 }
 
 
@@ -246,6 +247,8 @@ void CombineColor(){
     totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
     
   }while(totalAccelleration < 40);
+
+  colorMode = 0;
 }
 
 //Kører kronologisk igennem arrayet af HEX-colors
