@@ -62,62 +62,64 @@ strip.begin(); //Initializes the strip
 // [0-255] RGB value. You can still uncomments parts of colorview.pde and play with clear value.
 void loop() {
   float red, green, blue;
+  setColor(255,000,000);
+  delay(1000000);
   
-  tcs.setInterrupt(false);  // turn on LED
-
-  delay(60);  // takes 50ms to read
-
-  tcs.getRGB(&red, &green, &blue);
-  
-  
-  tcs.setInterrupt(true);  // turn off LED
-  int tempColor = red * 1.2;
-  if(red>green && red > blue){
-    if(red*1.5>255){
-      green -= 40;
-        blue -= 40;
-      red=255;
-      }else{
-        green *= 0.7;
-        blue *= 0.7;
-        red *= 1.5;
-        }
-      }
-
-   if(green>red && green > blue){
-    if((green * 1.5)>255){
-      red *= 0.7;
-        blue *= 0.7;
-      green=255;
-      }else{
-        red *= 0.7;
-        blue *= 0.7;
-        green *= 1.5;
-        }
-         }
-
-         if(blue>red && blue > green){
-    if((blue * 1.5)>255){
-      green *= 0.7;
-        blue *= 0.7;
-      blue=255;
-      }else{
-        red *= 0.7;
-        green *= 0.7;
-        blue *= 1.5;
-        }
-         }
-
-
-  
-
-   Serial.print("R:\t"); Serial.print(int(red)); 
- Serial.print("\tG:\t"); Serial.print(int(green)); 
-  Serial.print("\tB:\t"); Serial.print(int(blue));
-
-//  Serial.print("\t");
- // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
-  Serial.print("\n");
+//  tcs.setInterrupt(false);  // turn on LED
+//
+//  delay(60);  // takes 50ms to read
+//
+//  tcs.getRGB(&red, &green, &blue);
+//  
+//  
+//  tcs.setInterrupt(true);  // turn off LED
+//  int tempColor = red * 1.2;
+//  if(red>green && red > blue){
+//    if(red*1.5>255){
+//      green -= 40;
+//        blue -= 40;
+//      red=255;
+//      }else{
+//        green *= 0.7;
+//        blue *= 0.7;
+//        red *= 1.5;
+//        }
+//      }
+//
+//   if(green>red && green > blue){
+//    if((green * 1.5)>255){
+//      red *= 0.7;
+//        blue *= 0.7;
+//      green=255;
+//      }else{
+//        red *= 0.7;
+//        blue *= 0.7;
+//        green *= 1.5;
+//        }
+//         }
+//
+//         if(blue>red && blue > green){
+//    if((blue * 1.5)>255){
+//      green *= 0.7;
+//        blue *= 0.7;
+//      blue=255;
+//      }else{
+//        red *= 0.7;
+//        green *= 0.7;
+//        blue *= 1.5;
+//        }
+//         }
+//
+//
+//  
+//
+//   Serial.print("R:\t"); Serial.print(int(red)); 
+// Serial.print("\tG:\t"); Serial.print(int(green)); 
+//  Serial.print("\tB:\t"); Serial.print(int(blue));
+//
+////  Serial.print("\t");
+// // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
+//  Serial.print("\n");
 
 
     
@@ -125,7 +127,7 @@ void loop() {
   
 
 
-  setColor(red,green,blue);
+  
 
 //  uint16_t red, green, blue, clear;
 //  
@@ -145,7 +147,7 @@ void loop() {
 }
 
 void setColor(uint8_t red,uint8_t green, uint8_t blue){
-  for(int i=0; i<5 ; i++){
+  for(int i=0; i<10 ; i++){
     strip.setPixelColor(i, green,red,blue);
     }
     strip.show();
