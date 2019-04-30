@@ -270,9 +270,9 @@ void NextColorInFixedArray(){
    else{
         hexColorIterator = 0;
     SetColor(colorArray[hexColorIterator][0], colorArray[hexColorIterator][1], colorArray[hexColorIterator][2]);
-    ownRGBColor[0] = color[0];
-    ownRGBColor[0] = color[1];
-    ownRGBColor[0] = color[2];
+//    ownRGBColor[0] = color[0];
+  //  ownRGBColor[0] = color[1];
+   // ownRGBColor[0] = color[2];
     Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
     Serial.println(hexColorIterator);
     delay(500);
