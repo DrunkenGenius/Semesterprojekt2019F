@@ -10,7 +10,7 @@ unsigned int ownRGBColor[3] = {0, 0, 0}; //This box's colors
 //Basic Colors
 //HEX
 uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x6400FF,0x0000FF,0x0032FF,0x9600FF,0x00FFFF,0x00FFC8,0x00FF64,0x00FF32,0x00FF00,0x28FF00,0x4BFF00,0x64FF00,0x96FF00,0xC8FF00,0xFFFF00,0x96FF00};
-uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255},{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
+uint32_t colorArray[21][3] = {{255,255,255},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255},{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
 unsigned int hexColorIterator = 0;
 
 int stripLength = 60;
@@ -89,10 +89,7 @@ void loop() {
       FixedTransition();
       colorMode1 = true;
       colorMode2 = false; 
-      }
-        
-    
-      
+      } 
     if(totalAccelleration > 40){
       if(colorMode == 0){
         ChangeRandomColor();
@@ -104,8 +101,7 @@ void loop() {
   }
   }
   if(colorMode == 2){
-    
-      if(colorMode == 2 && colorMode2 == false){
+      if(colorMode2 == false){
         Serial.println("AAAA GG COLORMODE 2");
         ChangeEachAdressableRandom();
         colorMode2 = true;
@@ -157,10 +153,12 @@ void SetColor(uint8_t red,uint8_t green, uint8_t blue){
   ownRGBColor[0] = red;
   ownRGBColor[1] = green;
   ownRGBColor[2] = blue;
+
+  float intensity = 0.5;
   
-  for(int i=0; i<stripLength ; i++){
+  for(int i=0; i<stripLength; i++){
     if((i%3)==0){
-    strip.setPixelColor(i, green,red,blue);
+    strip.setPixelColor(i, green*intensity,red*intensity,blue*intensity);
     }
     }
     strip.show();
@@ -369,4 +367,4 @@ void ChangeEachAdressableRandom(){
       }
       strip.show();
   }
-  }   
+ }   
