@@ -13,7 +13,7 @@ uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x640
 uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255},{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
 unsigned int hexColorIterator = 0;
 
-int stripLength = 10;
+int stripLength = 5;
 
 int modeButtPin = 3;
 
@@ -131,10 +131,10 @@ void SetColor(uint8_t red,uint8_t green, uint8_t blue){
   ownRGBColor[1] = green;
   ownRGBColor[2] = blue;
   
-  for(int i=0; i<NUMPIXELS ; i++){
-    if((i%3)==0){
+  for(int i=0; i<stripLength ; i++){
+    //if((i%3)==0){
     strip.setPixelColor(i, green,red,blue);
-    }
+    //}
     }
     strip.show();
 }
@@ -312,5 +312,5 @@ void ChangeRandomColor(){
    Serial.println("Random Shake");
     int randomHex = random(0,21);
     SetColor(colorArray[randomHex][0], colorArray[randomHex][1], colorArray[randomHex][2]);
-    delay(500);
+    //delay(500);
    }
