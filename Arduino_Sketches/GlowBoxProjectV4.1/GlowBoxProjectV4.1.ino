@@ -173,6 +173,14 @@ void ChaosAbsorbColors(){
 
   tcs.getRGB(&red, &green, &blue); //Får farverne 
 
+  if(red > blue | red > green){
+    red *= 2;
+  }if(green > red || green > blue){
+    green *= 2;
+  }if(blue > red | blue > green){
+    blue *= 2;
+  }
+
   //Disse IF-statements kalibrerer farverne så de passer bedre på den rigtige farve der bliver aflæst, fremfor at det bare bliver vidt
   int tempColor = red * 1.2;
   if(red>green && red > blue){
@@ -231,6 +239,14 @@ void AbsorbColors(){
     
     tcs.getRGB(&red, &green, &blue); //Get RGB values
 
+  if(red > blue || red > green){
+    red *= 2;
+  }if(green > red || green > blue){
+    green *= 2;
+  }if(blue > red || blue > green){
+    blue *= 2;
+  }
+
     SetColor(red, green, blue);
     
   }while(digitalRead(modeButtPin) == 0);
@@ -278,6 +294,21 @@ void CombineColor(){
 
   tcs.getRGB(&red, &green, &blue);
 
+  if(red > blue || red > green){
+    red *= 2;
+  }if(green > red || green > blue){
+    green *= 2;
+  }if(blue > red || blue > green){
+    blue *= 2;
+  }
+  if(ownRed > ownBlue || ownRed > ownGreen){
+    ownRed *= 2;
+  }if(ownGreen > ownRed || ownGreen > ownBlue){
+    ownGreen *= 2;
+  }if(ownBlue > ownRed || ownBlue > ownGreen){
+    ownBlue *= 2;
+  }
+
   delay(500);
 
   SetColor((ownRed + red) / 2, (ownGreen + green) / 2, (ownBlue + blue) / 2);
@@ -307,7 +338,7 @@ void NextColorInFixedArray(){
     hexColorIterator++;
         Serial.println(hexColorIterator);
 
-    delay(500);
+    delay(200);
    }
    else{
         hexColorIterator = 0;
@@ -317,7 +348,7 @@ void NextColorInFixedArray(){
    // ownRGBColor[0] = color[2];
     Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
     Serial.println(hexColorIterator);
-    delay(500);
+    delay(200);
     }
   
   /*
