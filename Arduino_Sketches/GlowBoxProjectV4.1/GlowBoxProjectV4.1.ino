@@ -127,10 +127,10 @@ void loop() {
 
     if(digitalRead(modeButtPin) == 0){ //If the button hasn't been released
       AbsorbColors();   //Go to the function that absorbs colors
-    }else{
+    }else{    //If the button is no longer pressed
       delay(400);
 
-      if(digitalRead(modeButtPin) == 0){
+      if(digitalRead(modeButtPin) == 0){ //If the button is pressed now, after the delay
         CombineColor();
       }else{
         colorMode = (colorMode + 1) % 3; //If we don't use any of the advanced functions, it iterates through the modes as normal.
@@ -233,7 +233,7 @@ void AbsorbColors(){
 
     SetColor(red, green, blue);
     
-  }while(digitalRead(modeButtPin) == 1);
+  }while(digitalRead(modeButtPin) == 0);
 
   delay(1000); //An arbritrary delay to prevent color change for a second after the button has been released
 
@@ -284,6 +284,8 @@ void CombineColor(){
 
   int totalAccelleration;
 
+  delay(500);
+  
   do{
     delay(10);
     
@@ -291,7 +293,7 @@ void CombineColor(){
     accel.getEvent(&event);
     totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
     
-  }while(totalAccelleration < 40);
+  }while(totalAccelleration < 40 && digitalRead(modeButtPin) == 1);
 
   colorMode = 0;
 }
