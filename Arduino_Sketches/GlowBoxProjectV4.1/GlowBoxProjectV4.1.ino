@@ -13,9 +13,11 @@ uint32_t colorHexArray[21] = {0xFF0000,0xFF0032,0xFF0064,0xFF0096,0xFF00FF,0x640
 uint32_t colorArray[21][3] = {{0,255,0},{0,255,50},{0,255,100},{0,255,150},{0,255,255},{0,100,255},{0,0,255},{50,0,255},{150,0,255},{255,0,255},{255,0,200},{255,0,100},{255,0,50},{255,0,0},{255,40,0},{255,75,0},{255,100,0},{255,150,0},{255,200,0},{255,255,0},{150,255,0}};
 unsigned int hexColorIterator = 0;
 
-int stripLength = 60;
+int stripLength = 40;
 
 int modeButtPin = 3;
+
+int stripInterval = 2;
 
 int colorMode = 0; //0 == Color array ; 1 == Random Colors ; 2 == Absorb colors;
 
@@ -165,7 +167,7 @@ void SetColor(uint8_t red,uint8_t green, uint8_t blue){
   float intensity = 0.5;
   
   for(int i=0; i<stripLength; i++){
-    if((i%3)==0){
+    if((i%stripInterval)==0){
     strip.setPixelColor(i, green*intensity,red*intensity,blue*intensity);
     }
     }
@@ -401,7 +403,7 @@ void ChangeEachAdressableRandom(){
   for(int j=0; j<20; j++){
     for(int i=0; i<stripLength ; i++){
       int randomHex = random(0,21);
-        if((i%3)==0){
+        if((i%stripInterval)==0){
            strip.setPixelColor(i, colorArray[randomHex][0], colorArray[randomHex][1], colorArray[randomHex][2]);
            delay(5);
          }
