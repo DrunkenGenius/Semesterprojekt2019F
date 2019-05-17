@@ -92,7 +92,7 @@ void loop() {
       colorMode1 = true;
       colorMode2 = false; 
       } 
-    if(totalAccelleration >= 55){
+    if(totalAccelleration >= 70){
       ChangeEachAdressableRandom();
       ChangeEachAdressableRandom();
     }else if(totalAccelleration > 40){
@@ -113,7 +113,7 @@ void loop() {
         colorMode0 = false;
        }
        
-    if(totalAccelleration >= 55){
+    if(totalAccelleration >= 70){
       ChangeEachAdressableRandom();
       ChangeEachAdressableRandom();
     }
