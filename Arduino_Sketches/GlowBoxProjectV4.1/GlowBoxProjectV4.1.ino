@@ -21,6 +21,9 @@ int stripInterval = 2;
 
 int colorMode = 0; //0 == Color array ; 1 == Random Colors ; 2 == Absorb colors;
 
+int shakeValue = 40;
+int partyShakeValue = 70;
+
 
 bool colorMode0 = false; //Til at vide om man har skiftet colorModes for at lave en transition når man går i ny mode
 bool colorMode1 = false; //Til at vide om man har skiftet colorModes for at lave en transition når man går i ny mode
@@ -61,7 +64,7 @@ void setup() {
     Serial.println("Ooops, no ADXL343 detected ... Check your wiring!");
     while(1);
   }
- if(!tcs.begin()){
+  if(!tcs.begin()){
     Serial.println("Ooops, no TCS34725 detected ... Check your wiring!");
     while(1);
   }  
@@ -70,53 +73,66 @@ void setup() {
   ChangeRandomColor(); // Sæt random farve startup
 }
 
+
+
+
+
+
+
+
+
 void loop() {
   sensors_event_t event;
   accel.getEvent(&event);
 
-  int totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
+  int totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z); //Record Current Acceleration
 
   Serial.print("Acceleration : ");
   Serial.println(totalAccelleration);
 
   if(colorMode == 0 || colorMode == 1){
 
-    if(colorMode == 0 && colorMode0 == false){
+    if(colorMode == 0 && colorMode0 == false) //If we are changing to colormode 0
+    {
         RandomTransition();
         colorMode0 = true;
         colorMode1 = false;
-        }
+    }
         
-    if(colorMode == 1 && colorMode1 == false){
+    if(colorMode == 1 && colorMode1 == false) //If we are changing to colormode 1
+    {
       FixedTransition();
       colorMode1 = true;
       colorMode2 = false; 
-      } 
-    if(totalAccelleration >= 70){
+    } 
+    if(totalAccelleration > partyShakeValue  && colorMode == 0) //EXCESSIVE SHAKING RESULSTS IN A PARTY
+    {
       ChangeEachAdressableRandom();
       ChangeEachAdressableRandom();
-    }else if(totalAccelleration > 40){
-      if(colorMode == 0){
-        ChangeRandomColor();
+    }
+    else if(totalAccelleration > shakeValue)  //Regular shaking detection
+    {
+      if(colorMode == 0)
+      {
+        ChangeRandomColor();  //Chaos Color Change
       }
-      if(colorMode == 1){
-        NextColorInFixedArray();
+      if(colorMode == 1)
+      {
+        NextColorInFixedArray(); //Fixed Array Color Change
       }
       delay(50);
+    }
   }
-  }
-  if(colorMode == 2){
-      if(colorMode2 == false){
+  if(colorMode == 2) //CHAOS ABSORB
+  {
+      if(colorMode2 == false) //Transition to the mode
+      {
         Serial.println("AAAA GG COLORMODE 2");
         ChangeEachAdressableRandom();
         colorMode2 = true;
         colorMode0 = false;
        }
        
-    if(totalAccelleration >= 70){
-      ChangeEachAdressableRandom();
-      ChangeEachAdressableRandom();
-    }
       tcs.setInterrupt(false);  // turn off LED
       ChaosAbsorbColors();
   }
@@ -124,7 +140,10 @@ void loop() {
   Serial.println(digitalRead(modeButtPin));
   Serial.print("Mode: ");
   Serial.println(colorMode); 
-    
+
+
+
+   //BUTTON HAS BEEN PRESSED
   if(digitalRead(modeButtPin) == 0){
      /*
      * Check whether the button has been pushed in long enough to absorb colors, or if it should just switch mode.
@@ -157,6 +176,8 @@ void loop() {
   }
 }
 
+
+
 //opdeler RGB'en i de enkelte farver og sætter farven på strippen
 void SetColor(uint8_t red,uint8_t green, uint8_t blue){
 
@@ -183,13 +204,13 @@ void ChaosAbsorbColors(){
 
   tcs.getRGB(&red, &green, &blue); //Får farverne 
 
-  if(red > blue | red > green){
+  /*if(red > blue | red > green){
     red *= 2;
   }if(green > red || green > blue){
     green *= 2;
   }if(blue > red | blue > green){
     blue *= 2;
-  }
+  } Enhance Colors */ 
 
   //Disse IF-statements kalibrerer farverne så de passer bedre på den rigtige farve der bliver aflæst, fremfor at det bare bliver vidt
   int tempColor = red * 1.2;
@@ -249,13 +270,13 @@ void AbsorbColors(){
     
     tcs.getRGB(&red, &green, &blue); //Get RGB values
 
-  if(red > blue || red > green){
+  /*if(red > blue || red > green){
     red *= 2;
   }if(green > red || green > blue){
     green *= 2;
   }if(blue > red || blue > green){
     blue *= 2;
-  }
+  } Enhance Colors */ 
 
     SetColor(red, green, blue);
     
@@ -272,7 +293,7 @@ void AbsorbColors(){
     totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
 
     
-  }while(totalAccelleration < 40 && digitalRead(modeButtPin) != 1); //While there's no shake, and the button isn't pushed down
+  }while(totalAccelleration < shakeValue && digitalRead(modeButtPin) != 1); //While there's no shake, and the button isn't pushed down
 
   colorMode = 0;
 }
@@ -334,7 +355,7 @@ void CombineColor(){
     accel.getEvent(&event);
     totalAccelleration = abs(event.acceleration.x) + abs(event.acceleration.y) + abs(event.acceleration.z);
     
-  }while(totalAccelleration < 40 && digitalRead(modeButtPin) == 1);
+  }while(totalAccelleration < shakeValue && digitalRead(modeButtPin) == 1);
 
   colorMode = 0;
 }
