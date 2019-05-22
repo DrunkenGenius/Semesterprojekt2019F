@@ -204,14 +204,6 @@ void ChaosAbsorbColors(){
 
   tcs.getRGB(&red, &green, &blue); //Får farverne 
 
-  /*if(red > blue | red > green){
-    red *= 2;
-  }if(green > red || green > blue){
-    green *= 2;
-  }if(blue > red | blue > green){
-    blue *= 2;
-  } Enhance Colors */ 
-
   //Disse IF-statements kalibrerer farverne så de passer bedre på den rigtige farve der bliver aflæst, fremfor at det bare bliver vidt
   int tempColor = red * 1.2;
   if(red>green && red > blue){
@@ -254,8 +246,6 @@ void ChaosAbsorbColors(){
       Serial.print("\tG:\t"); Serial.print(int(green)); 
       Serial.print("\tB:\t"); Serial.print(int(blue));
 
-//  Serial.print("\t");
- // Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
     Serial.print("\n");
 }
 
@@ -269,14 +259,6 @@ void AbsorbColors(){
     delay(50); //Give the sensor time to read colors
     
     tcs.getRGB(&red, &green, &blue); //Get RGB values
-
-  /*if(red > blue || red > green){
-    red *= 2;
-  }if(green > red || green > blue){
-    green *= 2;
-  }if(blue > red || blue > green){
-    blue *= 2;
-  } Enhance Colors */ 
 
     SetColor(red, green, blue);
     
@@ -360,7 +342,7 @@ void CombineColor(){
   colorMode = 0;
 }
 
-//Kører kronologisk igennem arrayet af HEX-colors
+//Kører kronologisk igennem arrayet af RGB-colors
 void NextColorInFixedArray(){
   Serial.println("fixedArray Shake");
 
@@ -374,34 +356,10 @@ void NextColorInFixedArray(){
    else{
         hexColorIterator = 0;
     SetColor(colorArray[hexColorIterator][0], colorArray[hexColorIterator][1], colorArray[hexColorIterator][2]);
-//    ownRGBColor[0] = color[0];
-  //  ownRGBColor[0] = color[1];
-   // ownRGBColor[0] = color[2];
-    Serial.println("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESET!");
+    Serial.println("RESET!");
     Serial.println(hexColorIterator);
     delay(200);
     }
-  
-  /*
-  
-  int oldColors[] = {ownRGBColor[0], ownRGBColor[1], ownRGBColor[2]};
-  int newColors[] = {rgbColorArray[iterator][0], rgbColorArray[iterator][1], rgbColorArray[iterator][2]};
-
-  for(int i = 0; i < 100; i++){
-    for(int i2 = 0; i2 < 3; i2++){
-      ownRGBColor[i2] = oldColors[i2] + (float)(newColors[i2] - oldColors[i2]) * 0.01 * i;
-    }
-    SingleColor();
-    delay(2.5);
-  }
-  
-  for(int i = 0; i < 3; i++){
-    ownRGBColor[i] = newColors[i];
-    Serial.print("  ");
-    Serial.print(ownRGBColor[i]);
-  }
-  Serial.println();
-  */
 }
 
 
@@ -416,7 +374,6 @@ void ChangeRandomColor(){
    Serial.println("Random Shake");
     int randomHex = random(0,21);
     SetColor(colorArray[randomHex][0], colorArray[randomHex][1], colorArray[randomHex][2]);
-    //delay(500);
    }
 
 
