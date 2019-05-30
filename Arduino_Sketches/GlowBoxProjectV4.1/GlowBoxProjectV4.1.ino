@@ -270,13 +270,42 @@ void AbsorbColors(){
     
     tcs.getRGB(&red, &green, &blue); //Get RGB values
 
-  /*if(red > blue || red > green){
-    red *= 2;
-  }if(green > red || green > blue){
-    green *= 2;
-  }if(blue > red || blue > green){
-    blue *= 2;
-  } Enhance Colors */ 
+    int tempColor = red * 1.2;
+  if(red>green && red > blue){
+    if(red*1.5>255){
+      green -= 40;
+        blue -= 40;
+      red=255;
+      }else{
+        green *= 0.7;
+        blue *= 0.7;
+        red *= 1.5;
+        }
+      }
+
+   if(green>red && green > blue){
+    if((green * 1.5)>255){
+      red *= 0.7;
+        blue *= 0.7;
+      green=255;
+      }else{
+        red *= 0.7;
+        blue *= 0.7;
+        green *= 1.5;
+        }
+         }
+
+         if(blue>red && blue > green){
+    if((blue * 1.5)>255){
+      green *= 0.7;
+        blue *= 0.7;
+      blue=255;
+      }else{
+        red *= 0.7;
+        green *= 0.7;
+        blue *= 1.5;
+        }
+         }
 
     SetColor(red, green, blue);
     
@@ -325,20 +354,42 @@ void CombineColor(){
 
   tcs.getRGB(&red, &green, &blue);
 
-  if(red > blue || red > green){
-    red *= 2;
-  }if(green > red || green > blue){
-    green *= 2;
-  }if(blue > red || blue > green){
-    blue *= 2;
-  }
-  if(ownRed > ownBlue || ownRed > ownGreen){
-    ownRed *= 2;
-  }if(ownGreen > ownRed || ownGreen > ownBlue){
-    ownGreen *= 2;
-  }if(ownBlue > ownRed || ownBlue > ownGreen){
-    ownBlue *= 2;
-  }
+  int tempColor = red * 1.2;
+  if(red>green && red > blue){
+    if(red*1.5>255){
+      green -= 40;
+        blue -= 40;
+      red=255;
+      }else{
+        green *= 0.7;
+        blue *= 0.7;
+        red *= 1.5;
+        }
+      }
+
+   if(green>red && green > blue){
+    if((green * 1.5)>255){
+      red *= 0.7;
+        blue *= 0.7;
+      green=255;
+      }else{
+        red *= 0.7;
+        blue *= 0.7;
+        green *= 1.5;
+        }
+         }
+
+         if(blue>red && blue > green){
+    if((blue * 1.5)>255){
+      green *= 0.7;
+        blue *= 0.7;
+      blue=255;
+      }else{
+        red *= 0.7;
+        green *= 0.7;
+        blue *= 1.5;
+        }
+         }
 
   delay(500);
 
